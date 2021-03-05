@@ -2,7 +2,6 @@ package analyzeRule;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import retrofit2.Response;
 import util.StringUtils;
 import java.io.IOException;
 import java.util.Map;

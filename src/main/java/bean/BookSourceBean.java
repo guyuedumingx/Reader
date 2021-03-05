@@ -13,27 +13,29 @@ import lombok.NoArgsConstructor;
 @Data
 public class BookSourceBean implements Cloneable {
 
+
     /**
      * bookSourceComment :
-     * bookSourceGroup : Haxc.
-     * bookSourceName : 九七阅读网
+     * bookSourceGroup : JSon; 正则
+     * bookSourceName : 猎鹰小说网
      * bookSourceType : 0
-     * bookSourceUrl : http://m.bokcms.com
-     * customOrder : -3596
+     * bookSourceUrl : http://api.book.lieying.cn
+     * bookUrlPattern :
+     * customOrder : 0
      * enabled : true
-     * enabledExplore : true
+     * enabledExplore : false
      * exploreUrl :
-     * lastUpdateTime : 1602219578340
-     * ruleBookInfo : {"author":"[property=\"og:novel:author\"]@content","coverUrl":"[property=\"og:image\"]@content","intro":"[property=\"og:description\"]@content","kind":"[property=\"og:novel:category\"]@content","lastChapter":"[property=\"og:novel:latest_chapter_name\"]@content","name":"[property=\"og:novel:book_name\"]@content","tocUrl":"class.ksaa_btn@href","wordCount":"class.xq_bookne@tag.div.-2@text##字数："}
-     * ruleContent : {"content":"id.content@html","nextContentUrl":"text.下一页@href"}
-     * ruleExplore : {}
-     * ruleSearch : {"author":"class.book_other@ownText","bookList":"id.sitebox@dl","bookUrl":"tag.a@href","coverUrl":"tag.img@src","intro":"class.book_des@text","kind":"class.uptime@text","name":"tag.h3@a@text"}
-     * ruleToc : {"chapterList":"class.readlist@tag.li","chapterName":"tag.a@text","chapterUrl":"tag.a@href","nextTocUrl":"class.pg-next@href"}
-     * searchUrl : http://m.bokcms.com/search/,{
-     "charset": "",
-     "method": "POST",
-     "body": "submit=搜索&searchkey={{key}}"
+     * header : {
+     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36"
      }
+     * lastUpdateTime : 0
+     * loginUrl :
+     * ruleBookInfo : {"author":"##:author\"[^\"]+\"([^\"]*)##$1###","coverUrl":"##og:image\"[^\"]+\"([^\"]*)##$1###","intro":"##:description\"[^\"]+\"([\\w\\W]*?)\"/##$1###","kind":"##:category\"[^\"]+\"([^\"]*)##$1###","lastChapter":"##_chapter_name\"[^\"]+\"([^\"]*)##$1###","name":"##:book_name\"[^\"]+\"([^\"]*)##$1###","tocUrl":""}
+     * ruleContent : {"content":"$.chapter.body","nextContentUrl":""}
+     * ruleExplore : {}
+     * ruleSearch : {"author":"$.author","bookList":"$..books[*]","bookUrl":"/Book/getChapterListByBookId?bookId={$._id}","coverUrl":"$.cover","intro":"$.shortIntro","kind":"$.minorCate","lastChapter":"$.lastChapter","name":"$.title"}
+     * ruleToc : {"chapterList":"$.chapterInfo.chapters.[*]","chapterName":"$.title","chapterUrl":"$.link","nextTocUrl":""}
+     * searchUrl : /Book/search?query={{key}}&start={{(page-1)*20}}&limit=40&device_type=android&app_version=165
      * weight : 0
      */
 
@@ -47,6 +49,8 @@ public class BookSourceBean implements Cloneable {
     private Integer bookSourceType;
     @SerializedName("bookSourceUrl")
     private String bookSourceUrl;
+    @SerializedName("bookUrlPattern")
+    private String bookUrlPattern;
     @SerializedName("customOrder")
     private Integer customOrder;
     @SerializedName("enabled")
@@ -55,8 +59,12 @@ public class BookSourceBean implements Cloneable {
     private Boolean enabledExplore;
     @SerializedName("exploreUrl")
     private String exploreUrl;
+    @SerializedName("header")
+    private String header;
     @SerializedName("lastUpdateTime")
-    private Long lastUpdateTime;
+    private Integer lastUpdateTime;
+    @SerializedName("loginUrl")
+    private String loginUrl;
     @SerializedName("ruleBookInfo")
     private RuleBookInfoDTO ruleBookInfo;
     @SerializedName("ruleContent")
@@ -71,27 +79,6 @@ public class BookSourceBean implements Cloneable {
     private String searchUrl;
     @SerializedName("weight")
     private Integer weight;
-    /**
-     * header : {
-     "User-Agent": "Mozilla/5.0 (Linux; Android 9; JKM-AL00b Build/HUAWEIJKM-AL00b; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/79.0.3945.116 Mobile Safari/537.36"
-
-     }
-     * ruleContent : {"content":"class.content@html##$##---------📖本篇完---------","imageStyle":"full","nextContentUrl":"<js>\nif(result.indexOf('JSON.parse')>-1){\nresult.match(/JSON.parse\\('([^']+)'/)[1]}\n<\/js>\n$.data_list.ml..href","replaceRegex":"##[\\w\\d=/\\+]{30,}"}
-     * ruleExplore : {"bookList":"<js>\nresult.match(/JSON.parse\\('([^']+)'/)[1]\n<\/js>\n$.data_list[*].list[*]","bookUrl":"$.href","coverUrl":"$.img","kind":"$.title","name":"$.span"}
-     * ruleSearch : {"author":"","bookList":"<js>\nresult.match(/JSON.parse\\('([^']+)'/)[1]\n<\/js>\n$.data_list[*]","bookUrl":"$.href","coverUrl":"$.img","intro":"","kind":"$.span","lastChapter":"","name":"$.title"}
-     * ruleToc : {"chapterList":"@js:\nif(result.match(/目录/)){\nlist=result.match(/\\{\"title\":\"([^\"]+)\"[\\s\\S]+?\"href\":\"([^\"]+)\"\\}/g);\nhtml=[];\nfor(i=1;i<list.length;i++){\njson=list[i].match(/\\{\"title\":\"([^\"]+)[\\s\\S]+?\"href\":\"([^\"]+)\"\\}/);\nhtml.push({\ntitle:unescape(json[1].replace(/\\\\/g,'%')),\nhref:json[2]\n})\n}\n}else{\n\nlist=result.match(/\\{\"title\":\"([^\"]+)\".*?\"span\":\"([^\"]+)\",\"href\":\"([^\"]+)\".*?\\}/g);\nhtml=[];\nfor(i in list){\njson=list[i].match(/\\{\"title\":\"([^\"]+)\".*?\"span\":\"([^\"]+)\",\"href\":\"([^\"]+)\".*?\\}/);\nhtml.push({\ntitle:unescape(json[2].replace(/\\\\/g,'%')),\nhref:json[3],\nchapter:unescape(json[1].replace(/\\\\/g,'%'))\n})\n}\n}\nhtml","chapterName":"title","chapterUrl":"href","updateTime":"chapter"}
-     */
-
-    @SerializedName("header")
-    private String header;
-    @SerializedName("ruleContent")
-    private RuleContentDTO ruleContentX;
-    @SerializedName("ruleExplore")
-    private RuleSearchDTO ruleExploreX;
-    @SerializedName("ruleSearch")
-    private RuleSearchDTO ruleSearchX;
-    @SerializedName("ruleToc")
-    private RuleTocDTO ruleTocX;
 
     public static BookSourceBean objectFromData(String str) {
 
@@ -102,14 +89,13 @@ public class BookSourceBean implements Cloneable {
     @Data
     public static class RuleBookInfoDTO {
         /**
-         * author : [property="og:novel:author"]@content
-         * coverUrl : [property="og:image"]@content
-         * intro : [property="og:description"]@content
-         * kind : [property="og:novel:category"]@content
-         * lastChapter : [property="og:novel:latest_chapter_name"]@content
-         * name : [property="og:novel:book_name"]@content
-         * tocUrl : class.ksaa_btn@href
-         * wordCount : class.xq_bookne@tag.div.-2@text##字数：
+         * author : ##:author"[^"]+"([^"]*)##$1###
+         * coverUrl : ##og:image"[^"]+"([^"]*)##$1###
+         * intro : ##:description"[^"]+"([\w\W]*?)"/##$1###
+         * kind : ##:category"[^"]+"([^"]*)##$1###
+         * lastChapter : ##_chapter_name"[^"]+"([^"]*)##$1###
+         * name : ##:book_name"[^"]+"([^"]*)##$1###
+         * tocUrl :
          */
 
         @SerializedName("author")
@@ -126,8 +112,6 @@ public class BookSourceBean implements Cloneable {
         private String name;
         @SerializedName("tocUrl")
         private String tocUrl;
-        @SerializedName("wordCount")
-        private String wordCount;
 
         public static RuleBookInfoDTO objectFromData(String str) {
 
@@ -135,6 +119,14 @@ public class BookSourceBean implements Cloneable {
         }
     }
 
+    @NoArgsConstructor
+    @Data
+    public static class RuleContentDTO {
+        public static RuleContentDTO objectFromData(String str) {
+
+            return new Gson().fromJson(str, RuleContentDTO.class);
+        }
+    }
 
     @NoArgsConstructor
     @Data
@@ -145,50 +137,17 @@ public class BookSourceBean implements Cloneable {
         }
     }
 
-
-    @NoArgsConstructor
-    @Data
-    public static class RuleContentDTO {
-        /**
-         * content : class.content@html##$##---------📖本篇完---------
-         * imageStyle : full
-         * nextContentUrl : <js>
-         if(result.indexOf('JSON.parse')>-1){
-         result.match(/JSON.parse\('([^']+)'/)[1]}
-         </js>
-         $.data_list.ml..href
-         * replaceRegex : ##[\w\d=/\+]{30,}
-         */
-
-        @SerializedName("content")
-        private String content;
-        @SerializedName("imageStyle")
-        private String imageStyle;
-        @SerializedName("nextContentUrl")
-        private String nextContentUrl;
-        @SerializedName("replaceRegex")
-        private String replaceRegex;
-
-        public static RuleContentDTO objectFromData(String str) {
-
-            return new Gson().fromJson(str, RuleContentDTO.class);
-        }
-    }
-
     @NoArgsConstructor
     @Data
     public static class RuleSearchDTO {
         /**
-         * author :
-         * bookList : <js>
-         result.match(/JSON.parse\('([^']+)'/)[1]
-         </js>
-         $.data_list[*]
-         * bookUrl : $.href
-         * coverUrl : $.img
-         * intro :
-         * kind : $.span
-         * lastChapter :
+         * author : $.author
+         * bookList : $..books[*]
+         * bookUrl : /Book/getChapterListByBookId?bookId={$._id}
+         * coverUrl : $.cover
+         * intro : $.shortIntro
+         * kind : $.minorCate
+         * lastChapter : $.lastChapter
          * name : $.title
          */
 
@@ -219,34 +178,10 @@ public class BookSourceBean implements Cloneable {
     @Data
     public static class RuleTocDTO {
         /**
-         * chapterList : @js:
-         if(result.match(/目录/)){
-         list=result.match(/\{"title":"([^"]+)"[\s\S]+?"href":"([^"]+)"\}/g);
-         html=[];
-         for(i=1;i<list.length;i++){
-         json=list[i].match(/\{"title":"([^"]+)[\s\S]+?"href":"([^"]+)"\}/);
-         html.push({
-         title:unescape(json[1].replace(/\\/g,'%')),
-         href:json[2]
-         })
-         }
-         }else{
-
-         list=result.match(/\{"title":"([^"]+)".*?"span":"([^"]+)","href":"([^"]+)".*?\}/g);
-         html=[];
-         for(i in list){
-         json=list[i].match(/\{"title":"([^"]+)".*?"span":"([^"]+)","href":"([^"]+)".*?\}/);
-         html.push({
-         title:unescape(json[2].replace(/\\/g,'%')),
-         href:json[3],
-         chapter:unescape(json[1].replace(/\\/g,'%'))
-         })
-         }
-         }
-         html
-         * chapterName : title
-         * chapterUrl : href
-         * updateTime : chapter
+         * chapterList : $.chapterInfo.chapters.[*]
+         * chapterName : $.title
+         * chapterUrl : $.link
+         * nextTocUrl :
          */
 
         @SerializedName("chapterList")
@@ -255,8 +190,8 @@ public class BookSourceBean implements Cloneable {
         private String chapterName;
         @SerializedName("chapterUrl")
         private String chapterUrl;
-        @SerializedName("updateTime")
-        private String updateTime;
+        @SerializedName("nextTocUrl")
+        private String nextTocUrl;
 
         public static RuleTocDTO objectFromData(String str) {
 

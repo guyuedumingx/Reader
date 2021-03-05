@@ -6,7 +6,6 @@ import util.StringUtils;
 import util.NetworkUtils;
 import util.TextUtils;
 import util.UrlEncoderUtils;
-
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +59,7 @@ public class AnalyzeUrl implements JsExtensions {
         if (page != null && page > 1 && !ruleUrl.contains("searchPage"))
             throw new Exception("没有下一页");
         //替换js
-        ruleUrl = replaceJs(ruleUrl, baseUrl, page, key);
+//        ruleUrl = replaceJs(ruleUrl, baseUrl, page, key);
         //解析Header
         ruleUrl = analyzeHeader(ruleUrl, headerMapF);
         //分离编码规则

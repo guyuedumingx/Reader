@@ -3,8 +3,6 @@ package bean;
 import com.google.gson.Gson;
 import constant.BookType;
 import util.TextUtils;
-
-import javax.annotation.Generated;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

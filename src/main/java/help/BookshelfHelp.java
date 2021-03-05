@@ -1,13 +1,8 @@
 package help;
 
-import bean.BookInfoBean;
 import bean.BookShelfBean;
-import constant.AppConstant;
 import util.StringUtils;
 import util.TextUtils;
-
-import java.io.File;
-import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;

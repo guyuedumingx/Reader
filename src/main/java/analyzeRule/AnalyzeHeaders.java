@@ -18,7 +18,7 @@ public class AnalyzeHeaders {
     public static Map<String, String> getMap(BookSourceBean bookSourceBean) {
         Map<String, String> headerMap = new HashMap<>();
         if (bookSourceBean != null) {
-            String headers = bookSourceBean.getBookSourceUrl();
+            String headers = bookSourceBean.getSearchUrl();
             if (!isEmpty(headers)) {
                 if (StringUtils.isJsonObject(headers)) {
                     Map<String, String> map = new Gson().fromJson(headers, MAP_STRING);
