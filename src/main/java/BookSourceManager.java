@@ -42,7 +42,6 @@ public class BookSourceManager {
                 for (BookSourceBean bookSourceBean : bookSourceBeans) {
                     try {
                         new URL(bookSourceBean.getBookSourceUrl());
-                        bookSourceBean.setSerialNumber(0);
                     } catch (Exception exception) {
                         //删除书源
                     }
@@ -73,9 +72,9 @@ public class BookSourceManager {
 //        if (temp != null) {
 //            bookSourceBean.setSerialNumber(temp.getSerialNumber());
 //        }
-        if (bookSourceBean.getSerialNumber() < 0) {
+//        if (bookSourceBean.getSerialNumber() < 0) {
 //            bookSourceBean.setSerialNumber((int) (DbHelper.getDaoSession().getBookSourceBeanDao().queryBuilder().count() + 1));
-        }
+//        }
 //        DbHelper.getDaoSession().getBookSourceBeanDao().insertOrReplace(bookSourceBean);
     }
 

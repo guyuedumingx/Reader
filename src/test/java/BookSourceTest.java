@@ -12,12 +12,13 @@ public class BookSourceTest {
 
     @Test
     public void importTest() throws FileNotFoundException {
-        String path = this.getClass().getClassLoader().getResource("1.json").getPath();
+        String path = this.getClass().getClassLoader().getResource("rules.json").getPath();
         Scanner in = new Scanner(new File(path));
         StringBuilder builder = new StringBuilder();
         while(in.hasNext()) {
             builder.append(in.next()) ;
         }
         List<BookSourceBean> bookSourceBeans = BookSourceManager.importSource(builder.toString());
+
     }
 }
