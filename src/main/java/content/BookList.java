@@ -5,7 +5,6 @@ import analyzeRule.AnalyzeRule;
 import bean.BookShelfBean;
 import bean.BookSourceBean;
 import bean.SearchBookBean;
-import org.mozilla.javascript.NativeObject;
 import retrofit2.Response;
 import util.NetworkUtils;
 import util.StringUtils;
@@ -40,97 +39,103 @@ public class BookList {
         this.isFind = isFind;
     }
 
-//    List<SearchBookBean> analyzeSearchBook(final Response<String> response) {
-//        String baseUrl;
-//        baseUrl = NetworkUtils.getUrl(response);
-//        if (isEmpty(response.body())) {
-//            return;
-//        } else {
-//            Debug.printLog(tag, "┌成功获取搜索结果");
-//            Debug.printLog(tag, "└" + baseUrl);
-//        }
-//        String body = response.body();
-//        List<SearchBookBean> books = new ArrayList<>();
-//        AnalyzeRule analyzer = new AnalyzeRule(null);
-//        analyzer.setContent(body, baseUrl);
-//        //如果符合详情页url规则
-//        if (!isEmpty(bookSourceBean.getRuleBookUrlPattern())
-//                && baseUrl.matches(bookSourceBean.getRuleBookUrlPattern())) {
-//            Debug.printLog(tag, ">搜索结果为详情页");
-//            SearchBookBean item = getItem(analyzer, baseUrl);
-//            if (item != null) {
-//                item.setBookInfoHtml(body);
-//                books.add(item);
-//            }
-//        } else {
-//            initRule();
-//            List<Object> collections;
-//            boolean reverse = false;
-//            boolean allInOne = false;
-//            if (ruleList.startsWith("-")) {
-//                reverse = true;
-//                ruleList = ruleList.substring(1);
-//            }
-//            // 仅使用java正则表达式提取书籍列表
-//            if (ruleList.startsWith(":")) {
-//                ruleList = ruleList.substring(1);
-//                Debug.printLog(tag, "┌解析搜索列表");
-//                getBooksOfRegex(body, ruleList.split("&&"), 0, analyzer, books);
-//            } else {
-//                if (ruleList.startsWith("+")) {
-//                    allInOne = true;
-//                    ruleList = ruleList.substring(1);
-//                }
-//                //获取列表
-//                Debug.printLog(tag, "┌解析搜索列表");
-//                collections = analyzer.getElements(ruleList);
-//                if (collections.size() == 0 && isEmpty(bookSourceBean.getRuleBookUrlPattern())) {
-//                    Debug.printLog(tag, "└搜索列表为空,当做详情页处理");
-//                    SearchBookBean item = getItem(analyzer, baseUrl);
-//                    if (item != null) {
-//                        item.setBookInfoHtml(body);
-//                        books.add(item);
-//                    }
-//                } else {
-//                    Debug.printLog(tag, "└找到 " + collections.size() + " 个匹配的结果");
-//                    if (allInOne) {
-//                        for (int i = 0; i < collections.size(); i++) {
-//                            Object object = collections.get(i);
-//                            SearchBookBean item = getItemAllInOne(analyzer, object, baseUrl, i == 0);
-//                            if (item != null) {
-//                                //如果网址相同则缓存
-//                                if (baseUrl.equals(item.getNoteUrl())) {
-//                                    item.setBookInfoHtml(body);
+    List<SearchBookBean> analyzeSearchBook(Response<String> response) {
+        try {
+            String baseUrl;
+            baseUrl = NetworkUtils.getUrl(response);
+            if (isEmpty(response.body())) {
+                return null;
+            } else {
+                Debug.printLog(tag, "┌成功获取搜索结果");
+                Debug.printLog(tag, "└" + baseUrl);
+            }
+            String body = response.body();
+            List<SearchBookBean> books = new ArrayList<>();
+            AnalyzeRule analyzer = new AnalyzeRule(null);
+            analyzer.setContent(body, baseUrl);
+            //如果符合详情页url规则
+            if (!isEmpty(bookSourceBean.getRuleBookUrlPattern())
+                    && baseUrl.matches(bookSourceBean.getRuleBookUrlPattern())) {
+                Debug.printLog(tag, ">搜索结果为详情页");
+                SearchBookBean item = getItem(analyzer, baseUrl);
+                if (item != null) {
+                    item.setBookInfoHtml(body);
+                    books.add(item);
+                }
+            } else {
+                initRule();
+                List<Object> collections;
+                boolean reverse = false;
+                boolean allInOne = false;
+                if (ruleList.startsWith("-")) {
+                    reverse = true;
+                    ruleList = ruleList.substring(1);
+                }
+                // 仅使用java正则表达式提取书籍列表
+                if (ruleList.startsWith(":")) {
+                    ruleList = ruleList.substring(1);
+                    Debug.printLog(tag, "┌解析搜索列表");
+                    getBooksOfRegex(body, ruleList.split("&&"), 0, analyzer, books);
+                } else {
+                    if (ruleList.startsWith("+")) {
+                        allInOne = true;
+                        ruleList = ruleList.substring(1);
+                    }
+                    //获取列表
+                    Debug.printLog(tag, "┌解析搜索列表");
+                    collections = analyzer.getElements(ruleList);
+                    if (collections.size() == 0 && isEmpty(bookSourceBean.getRuleBookUrlPattern())) {
+                        Debug.printLog(tag, "└搜索列表为空,当做详情页处理");
+                        SearchBookBean item = getItem(analyzer, baseUrl);
+                        if (item != null) {
+                            item.setBookInfoHtml(body);
+                            books.add(item);
+                        }
+                    } else {
+                        Debug.printLog(tag, "└找到 " + collections.size() + " 个匹配的结果");
+                        if (allInOne) {
+                            for (int i = 0; i < collections.size(); i++) {
+                                Object object = collections.get(i);
+//                                SearchBookBean item = getItemAllInOne(analyzer, object, baseUrl, i == 0);
+//                                if (item != null) {
+//                                    //如果网址相同则缓存
+//                                    if (baseUrl.equals(item.getNoteUrl())) {
+//                                        item.setBookInfoHtml(body);
+//                                    }
+//                                    books.add(item);
 //                                }
-//                                books.add(item);
-//                            }
-//                        }
-//                    } else {
-//                        for (int i = 0; i < collections.size(); i++) {
-//                            Object object = collections.get(i);
-//                            analyzer.setContent(object, baseUrl);
-//                            SearchBookBean item = getItemInList(analyzer, baseUrl, i == 0);
-//                            if (item != null) {
-//                                //如果网址相同则缓存
-//                                if (baseUrl.equals(item.getNoteUrl())) {
-//                                    item.setBookInfoHtml(body);
-//                                }
-//                                books.add(item);
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//            if (books.size() > 1 && reverse) {
-//                Collections.reverse(books);
-//            }
-//        }
-//        if (books.isEmpty()) {
-//            return;
-//        }
-//        Debug.printLog(tag, "-书籍列表解析结束");
-//    }
-//
+                            }
+                        } else {
+                            for (int i = 0; i < collections.size(); i++) {
+                                Object object = collections.get(i);
+                                analyzer.setContent(object, baseUrl);
+                                SearchBookBean item = getItemInList(analyzer, baseUrl, i == 0);
+                                if (item != null) {
+                                    //如果网址相同则缓存
+                                    if (baseUrl.equals(item.getNoteUrl())) {
+                                        item.setBookInfoHtml(body);
+                                    }
+                                    books.add(item);
+                                }
+                            }
+                        }
+                    }
+                }
+                if (books.size() > 1 && reverse) {
+                    Collections.reverse(books);
+                }
+            }
+            if (books.isEmpty()) {
+                return null;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        Debug.printLog(tag, "-书籍列表解析结束");
+        return null;
+    }
+
+
     private void initRule() {
         if (isFind && !isEmpty(bookSourceBean.getRuleFindList())) {
             ruleList = bookSourceBean.getRuleFindList();

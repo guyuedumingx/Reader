@@ -50,14 +50,17 @@ public class AnalyzeUrl implements JsExtensions {
         //替换关键字
         if (!StringUtils.isTrimEmpty(key)) {
             // 处理searchKey=searchKey的情况
-            if (ruleUrl.matches("=[\\s{(]*searchKey"))
+            if (ruleUrl.matches("=[\\s{(]*searchKey")) {
                 ruleUrl = ruleUrl.replaceFirst("=[\\s{(]*searchKey", "=" + key);
-            else
+            }
+            else {
                 ruleUrl = ruleUrl.replace("searchKey", key);
+            }
         }
         //判断是否有下一页
-        if (page != null && page > 1 && !ruleUrl.contains("searchPage"))
+        if (page != null && page > 1 && !ruleUrl.contains("searchPage")) {
             throw new Exception("没有下一页");
+        }
         //替换js
         ruleUrl = replaceJs(ruleUrl, baseUrl, page, key);
         //解析Header
@@ -140,7 +143,7 @@ public class AnalyzeUrl implements JsExtensions {
      * 解析页数
      */
     private String analyzePage(String ruleUrl, final Integer searchPage) {
-        if (searchPage == null) return ruleUrl;
+        if (searchPage == null) {return ruleUrl;}
         Matcher matcher = pagePattern.matcher(ruleUrl);
         while (matcher.find()) {
             String[] pages = matcher.group(1).split(",");
@@ -280,14 +283,14 @@ public class AnalyzeUrl implements JsExtensions {
         return queryStr;
     }
 
-    public String getPostData() {
+    public byte[] getPostData() {
         StringBuilder builder = new StringBuilder();
         Set<String> keys = queryMap.keySet();
         for (String key : keys) {
             builder.append(String.format("%s=%s&", key, queryMap.get(key)));
         }
         builder.deleteCharAt(builder.lastIndexOf("&"));
-        return builder.toString();
+        return builder.toString().getBytes();
     }
 
     public UrlMode getUrlMode() {

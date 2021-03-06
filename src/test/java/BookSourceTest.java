@@ -7,6 +7,7 @@ import bean.BookSourceBean;
 import com.google.gson.Gson;
 import content.BookList;
 import content.WebBook;
+import model.WebBookModel;
 import org.junit.Test;
 
 import java.io.File;
@@ -53,12 +54,12 @@ public class BookSourceTest {
         }
         List<BookSourceBean> bookSourceBeans = BookSourceManager.importSource(builder.toString());
         headerMap = AnalyzeHeaders.getMap(bookSourceBeans.get(0));
-        tag = bookSourceBeans.get(0).getBookSourceUrl();
-        AnalyzeUrl analyzeUrl = new AnalyzeUrl(bookSourceBeans.get(0).getRuleSearchUrl(), content, page, headerMap,tag);
-        BookList bookList = new BookList(tag, bookSourceBeans.get(0).getBookSourceName(),bookSourceBeans.get(0),true);
-        bookList.getItemInList(new AnalyzeRule(null),tag,true);
-        Gson gson = new Gson();
-        BookShelfBean bookShelfBean = gson.fromJson(analyzeUrl.getPostData(),BookShelfBean.class);
-        WebBook webBook = new WebBook(bookShelfBean.getTag(),bookSourceBeans.get(0));
+        WebBookModel model = new WebBookModel();
+        BookShelfBean bookShelfBean = new BookShelfBean();
+        bookShelfBean.setTag(bookSourceBeans.get(0).getRuleSearchUrl());
+//        bookShelfBean.setNoteUrl(bookSourceBeans.get(0).getRuleSearchUrl());
+//        model.getBookInfo(bookShelfBean,bookSourceBeans.get(0));
+        WebBook book = new WebBook(bookShelfBean.getTag(),bookSourceBeans.get(0));
+        book.searchBook("圣墟",1);
     }
 }

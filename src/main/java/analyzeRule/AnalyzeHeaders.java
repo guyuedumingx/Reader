@@ -17,28 +17,14 @@ public class AnalyzeHeaders {
 
     public static Map<String, String> getMap(BookSourceBean bookSourceBean) {
         Map<String, String> headerMap = new HashMap<>();
-        if (bookSourceBean != null) {
-            String headers = bookSourceBean.getRuleSearchUrl();
-            if (!isEmpty(headers)) {
-                if(headers.contains(",")) {
-                    String[] split = headers.split(",");
-                    Map<String, String> map = new Gson().fromJson(split[1], MAP_STRING);
-                    headerMap.putAll(map);
-                } else {
-                    headerMap.put("User-Agent", headers);
-                }
-            } else {
-                headerMap.put("User-Agent", getDefaultUserAgent());
-            }
-//            CookieBean cookie = DbHelper.getDaoSession().getCookieBeanDao().load(bookSourceBean.getBookSourceUrl());
-//            if (cookie != null) {
-//                headerMap.put("Cookie", cookie.getCookie());
-//            }
+        if (bookSourceBean != null && !isEmpty(bookSourceBean.getHttpUserAgent())) {
+            headerMap.put("User-Agent", bookSourceBean.getHttpUserAgent());
         } else {
             headerMap.put("User-Agent", getDefaultUserAgent());
         }
         return headerMap;
     }
+
 
     private static String getDefaultUserAgent() {
         return "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.182 Safari/537.36 Edg/88.0.705.81";
