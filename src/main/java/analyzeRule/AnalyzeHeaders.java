@@ -18,10 +18,11 @@ public class AnalyzeHeaders {
     public static Map<String, String> getMap(BookSourceBean bookSourceBean) {
         Map<String, String> headerMap = new HashMap<>();
         if (bookSourceBean != null) {
-            String headers = bookSourceBean.getSearchUrl();
+            String headers = bookSourceBean.getRuleSearchUrl();
             if (!isEmpty(headers)) {
-                if (StringUtils.isJsonObject(headers)) {
-                    Map<String, String> map = new Gson().fromJson(headers, MAP_STRING);
+                if(headers.contains(",")) {
+                    String[] split = headers.split(",");
+                    Map<String, String> map = new Gson().fromJson(split[1], MAP_STRING);
                     headerMap.putAll(map);
                 } else {
                     headerMap.put("User-Agent", headers);

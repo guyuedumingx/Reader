@@ -59,7 +59,7 @@ public class AnalyzeUrl implements JsExtensions {
         if (page != null && page > 1 && !ruleUrl.contains("searchPage"))
             throw new Exception("没有下一页");
         //替换js
-//        ruleUrl = replaceJs(ruleUrl, baseUrl, page, key);
+        ruleUrl = replaceJs(ruleUrl, baseUrl, page, key);
         //解析Header
         ruleUrl = analyzeHeader(ruleUrl, headerMapF);
         //分离编码规则
@@ -280,14 +280,14 @@ public class AnalyzeUrl implements JsExtensions {
         return queryStr;
     }
 
-    public byte[] getPostData() {
+    public String getPostData() {
         StringBuilder builder = new StringBuilder();
         Set<String> keys = queryMap.keySet();
         for (String key : keys) {
             builder.append(String.format("%s=%s&", key, queryMap.get(key)));
         }
         builder.deleteCharAt(builder.lastIndexOf("&"));
-        return builder.toString().getBytes();
+        return builder.toString();
     }
 
     public UrlMode getUrlMode() {

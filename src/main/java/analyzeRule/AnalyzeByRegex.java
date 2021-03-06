@@ -33,13 +33,14 @@ public class AnalyzeByRegex {
         if (index + 1 == regs.length) {
             // 获取规则列表
             HashMap<String, String> ruleMap = new HashMap<>();
-            ruleMap.put("BookName", bookSourceBean.getRuleBookInfo().getName());
-            ruleMap.put("BookAuthor", bookSourceBean.getRuleBookInfo().getAuthor());
-            ruleMap.put("BookKind", bookSourceBean.getRuleBookInfo().getKind());
-            ruleMap.put("LastChapter", bookSourceBean.getRuleBookInfo().getLastChapter());
-            ruleMap.put("Introduce", bookSourceBean.getRuleBookInfo().getIntro());
-            ruleMap.put("CoverUrl", bookSourceBean.getRuleBookInfo().getCoverUrl());
-            ruleMap.put("ChapterUrl", bookSourceBean.getRuleBookInfo().getTocUrl());
+            ruleMap.put("BookName", bookSourceBean.getRuleBookName());
+            ruleMap.put("BookAuthor", bookSourceBean.getRuleBookAuthor());
+            ruleMap.put("BookKind", bookSourceBean.getRuleBookKind());
+            ruleMap.put("LastChapter", bookSourceBean.getRuleBookLastChapter());
+            ruleMap.put("Introduce", bookSourceBean.getRuleIntroduce());
+            ruleMap.put("CoverUrl", bookSourceBean.getRuleCoverUrl());
+            ruleMap.put("ChapterUrl", bookSourceBean.getRuleChapterUrl());
+
             // 分离规则参数
             List<String> ruleName = new ArrayList<>();
             List<List<String>> ruleParams = new ArrayList<>();  // 创建规则参数容器

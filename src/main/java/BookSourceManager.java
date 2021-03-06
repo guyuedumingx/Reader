@@ -1,3 +1,4 @@
+import bean.BookSource3Bean;
 import bean.BookSourceBean;
 import util.GsonUtils;
 import util.StringUtils;
@@ -34,6 +35,28 @@ public class BookSourceManager {
         return new ArrayList<>();
     }
 
+    public static List<BookSource3Bean> importSource3(String string) {
+        if (StringUtils.isTrimEmpty(string)) return null;
+        string = string.trim();
+//        if (NetworkUtils.isIPv4Address(string)) {
+//            string = String.format("http://%s:65501", string);
+//        }
+        if (StringUtils.isJsonType(string)) {
+            return importBookSource3FromJson(string.trim());
+        }else if(StringUtils.isCompressJsonType(string)){
+            return importBookSource3FromJson(StringUtils.unCompressJson(string));
+        }
+        //TODO NEtwork BookSource
+//        if (NetworkUtils.isUrl(string)) {
+//            return BaseModelImpl.getInstance().getRetrofitString(StringUtils.getBaseUrl(string), "utf-8")
+//                    .create(IHttpGetApi.class)
+//                    .get(string, AnalyzeHeaders.getMap(null))
+//                    .flatMap(rsp -> importBookSourceFromJson(rsp.body()))
+//                    .compose(RxUtils::toSimpleSingle);
+//        }
+        return new ArrayList<>();
+    }
+
     private static List<BookSourceBean> importBookSourceFromJson(String json) {
         List<BookSourceBean> bookSourceBeans = new ArrayList<>();
         if (StringUtils.isJsonArray(json)) {
@@ -58,6 +81,32 @@ public class BookSourceManager {
             }
         }
         return bookSourceBeans;
+    }
+
+    private static List<BookSource3Bean> importBookSource3FromJson(String json) {
+        List<BookSource3Bean> bookSource3Beans = new ArrayList<>();
+        if (StringUtils.isJsonArray(json)) {
+            try {
+                bookSource3Beans = GsonUtils.parseJArray(json, BookSource3Bean.class);
+                for (BookSource3Bean bookSourceBean : bookSource3Beans) {
+                    try {
+                        new URL(bookSourceBean.getBookSourceUrl());
+                    } catch (Exception exception) {
+                        //删除书源
+                    }
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        if (StringUtils.isJsonObject(json)) {
+            try {
+                BookSource3Bean bookSourceBean = GsonUtils.parseJObject(json, BookSource3Bean.class);
+//                addBookSource(bookSourceBean);
+                bookSource3Beans.add(bookSourceBean);
+            } catch (Exception ignored) {
+            }
+        }
+        return bookSource3Beans;
     }
 
     // TODO add BookSource to db
